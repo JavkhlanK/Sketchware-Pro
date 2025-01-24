@@ -1016,6 +1016,8 @@ Please click on Settings to allow permission for Storage. Without this permissio
     <string name="common_word_widget">Widget</string>
     <string name="common_word_yes">Yes</string>
     <string name="common_word_new">New</string>
+    <string name="common_word_redo">Redo</string>
+    <string name="common_word_undo">Undo</string>
     <string name="component_add_docs_button_title_go_to_docs">Read Documentation</string>
     <string name="component_add_message_docs_updated_soon">The docs page will be updated soon</string>
     <string name="component_context_menu_title">Component menu</string>
@@ -1251,6 +1253,8 @@ You must enter the API key to operate the map normally."</string>
     <string name="design_manager_widget_hint_enter_widget_name">Enter widget name</string>
     <string name="design_manager_widget_title_actionbar_title">Widget details</string>
     <string name="design_option_menu_title_save_project">Save project</string>
+    <string name="design_option_menu_title_show_hierarchy">Show Hierarchy</string>
+    <string name="design_hierarchy_sheet_layout_hierarchy">Layout Hierarchy</string>
     <string name="design_property_recent_message_nodata">Recently used properties will be displayed</string>
     <string name="design_quit_button_save_and_exit">Save &amp; exit</string>
     <string name="design_quit_message_confirm_save">Do you want to save your changes before quitting?</string>
@@ -2003,7 +2007,8 @@ Please try again later"</string>
     <string name="shared_project_detail_about_project_information_last_updated">Last Updated</string>
     <string name="shared_project_detail_about_project_information_registered_date">Registered Date</string>
     <string name="shared_project_detail_about_report_project_dialog_description_reason">The reason you find this content or app objectionable:</string>
-    <string name="shared_project_detail_about_report_project_dialog_title_flag_as_inappropriate">Flag as inappropriate</string>
+    <string
+        name="shared_project_detail_about_report_project_dialog_title_flag_as_inappropriate">Flag as inappropriate</string>
     <string name="shared_project_detail_about_report_project_hint_written_english">The reason has to be written in English</string>
     <string name="shared_project_detail_about_report_project_title_reason_type_1">Sexual content</string>
     <string name="shared_project_detail_about_report_project_title_reason_type_2">Graphic violence</string>
@@ -2206,7 +2211,9 @@ Please try again later"</string>
     <string name="link_discord_invite">https://discord.gg/kq39yhT4rX</string>
     <string name="link_telegram_invite">https://t.me/sketchwarepro</string>
     <string name="link_about_team">https://sketchware-pro.github.io/Sketchware-Pro/about.json</string>
-    <string name="link_github_commits_url"><![CDATA[https://api.github.com/repos/Sketchware-Pro/Sketchware-Pro/commits?per_page=%s&page=%s]]></string>
+    <string name="link_github_commits_url">
+        <![CDATA[https://api.github.com/repos/Sketchware-Pro/Sketchware-Pro/commits?per_page=%s&page=%s]]>
+    </string>
     <string name="github_api_error_message">Something went wrong. Please wait and try again.</string>
     <string name="github_api_date_unavailable">Date unavailable</string>
     <string name="link_github_url">https://github.com/Sketchware-Pro/Sketchware-Pro</string>
@@ -2243,7 +2250,7 @@ Please try again later"</string>
 
     <string name="used_custom_blocks">Used Custom Blocks</string>
     <string name="property_enter_value">Enter %s value</string>
-    
-    <string name="code_viewer">Code Viewer</string>
+    string name="code_viewer">Code Viewer</string>
+
 
 </resources>

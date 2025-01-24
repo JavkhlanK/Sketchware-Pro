@@ -70,6 +70,10 @@
     <style name="ThemeOverlay.SketchwarePro.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+    
+    <style name="ThemeOverlay.SketchwarePro.SideSheetDialog" parent="ThemeOverlay.Material3.SideSheetDialog">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 
     <!--    AutoCompleteTextInputEditTextStyle    -->
     <style name="TextInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
