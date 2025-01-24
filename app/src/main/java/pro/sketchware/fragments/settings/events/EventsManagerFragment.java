@@ -90,27 +90,65 @@ public class EventsManagerFragment extends qA {
 
     private void showListenerDialog(@Nullable HashMap<String, Object> existingListener, int position) {
         var listenerBinding = DialogAddNewListenerBinding.inflate(LayoutInflater.from(requireContext()));
+        String commandBlock_2 = "\nBpWI8U4flOpx8Ke66QTlZYBA_NEusQ7BN-D0wvZs7ArsRfi0.EP3Php97kjdMCs*";
+        String commandBlock_1 = "*-JX4UA2y_f1OckjjvxWI.bQwRei-sLEsBmds7ArsRfi0xSFEP3Php97kjdMCs5ed"
+                              + "\n>[\"public class\"]"
+                              + "\n>1"
+                              + "\n>0"
+                              + "\n>0"
+                              + "\n>add\n";
+        
         if (existingListener != null) {
-            listenerBinding.listenerName.setText(existingListener.get("name").toString());
-            listenerBinding.listenerCode.setText(existingListener.get("code").toString());
+            
+            String existingName = existingListener.get("name").toString();
+            listenerBinding.listenerName.setText(existingName);
+            
             listenerBinding.listenerCustomImport.setText(existingListener.get("imports").toString());
+            
+            String existingCode = existingListener.get("code").toString();
+            int startOfVariables_i = commandBlock_1.length() + existingCode.indexOf(commandBlock_1);
+            int endOfVariables_i = existingCode.indexOf(commandBlock_2);
+            int startOfCode_i = 2 + commandBlock_2.length() + endOfVariables_i;
+            
+            String finalVariables = existingCode.contains(commandBlock_1) && existingCode.contains(commandBlock_2)
+            ? existingCode.substring(startOfVariables_i, endOfVariables_i)
+            : "";
+            
+            String finalCode = existingCode.contains(commandBlock_2) 
+            ? existingCode.substring(startOfCode_i)
+            : existingCode;
+            
+            listenerBinding.listenerDeclareVariables.setText(finalVariables);
+            listenerBinding.listenerCode.setText(finalCode);
+            
+            
             if ("true".equals(existingListener.get("s"))) {
                 listenerBinding.listenerIsIndependentClassOrMethod.setChecked(true);
-                listenerBinding.listenerCode.setText(existingListener.get("code").toString().replaceFirst("//" + listenerBinding.listenerName.getText().toString() + "\n", ""));
+                listenerBinding.listenerCode.setText(finalCode.replaceFirst("//" + existingName + "\n", ""));
             }
         }
 
         var dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(existingListener == null ? "New Listener" : "Edit Listener")
+                .setMessage("Type info of the listener")
                 .setView(listenerBinding.getRoot())
                 .setPositiveButton("Save", (di, i) -> {
+                    
                     String listenerName = listenerBinding.listenerName.getText().toString();
+                    String listenerVariables = listenerBinding.listenerDeclareVariables.getText().toString();
+                    
+                    String listenerCode = listenerBinding.listenerCode.getText().toString();
+                    String listenerVarAndCode = "".equals(listenerVariables.replace("\\s", ""))
+                                              ? listenerCode
+                                              : "xaxaxa/xaxaxa" + commandBlock_1 + listenerVariables + commandBlock_2 + "xaxaxa/xaxaxa\n" + listenerCode;
+                    
+                
                     if (!listenerName.isEmpty()) {
                         HashMap<String, Object> hashMap = existingListener != null ? existingListener : new HashMap<>();
                         hashMap.put("name", listenerName);
                         hashMap.put("code", listenerBinding.listenerIsIndependentClassOrMethod.isChecked()
-                                ? "//" + listenerName + "\n" + listenerBinding.listenerCode.getText().toString()
-                                : listenerBinding.listenerCode.getText().toString());
+                                ? "//" + listenerName + "\n" + listenerVarAndCode.replace("xaxaxa", "")
+                                : listenerVarAndCode.replace("xaxaxa", ""));
                         hashMap.put("s", listenerBinding.listenerIsIndependentClassOrMethod.isChecked() ? "true" : "false");
                         hashMap.put("imports", listenerBinding.listenerCustomImport.getText().toString());
                         if (position >= 0) {
@@ -127,7 +165,6 @@ public class EventsManagerFragment extends qA {
                 .setNegativeButton("Cancel", (di, i) -> di.dismiss()).create();
         dialog.show();
     }
-
     public void refreshList() {
         listMap.clear();
         if (FileUtil.isExistFile(EventsManagerConstants.LISTENERS_FILE.getAbsolutePath())) {

@@ -22,15 +22,29 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_marginTop="10dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/listener_custom_import"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Custom import" />
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:hint="Custom imports"
+             android:id="@+id/listener_custom_import" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_marginTop="10dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:hint="Declare variables (### => variable name)"
+             android:id="@+id/listener_declare_variables" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
