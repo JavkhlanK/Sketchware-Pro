@@ -144,7 +144,8 @@ public class ViewBeanFactory {
         if (bean.getClassInfo().b("ListView")
                 || bean.getClassInfo().b("GridView")
                 || bean.getClassInfo().b("Spinner")
-                || bean.getClassInfo().b("RecyclerView")) {
+                || bean.getClassInfo().b("RecyclerView")
+                || bean.getClassInfo().b("ViewPager")) {
             var customView = attributes.getOrDefault("tools:listitem", null);
             if (customView != null) {
                 if (customView.startsWith("@layout/")) {

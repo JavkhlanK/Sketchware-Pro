@@ -429,7 +429,8 @@ public class Ox {
         if ((viewBean.getClassInfo().b("ListView")
                 || viewBean.getClassInfo().b("GridView")
                 || viewBean.getClassInfo().b("Spinner")
-                || viewBean.getClassInfo().b("RecyclerView"))
+                || viewBean.getClassInfo().b("RecyclerView")
+                || viewBean.getClassInfo().b("ViewPager"))
                 && !injectHandler.contains("listitem")) {
             var customView = viewBean.customView;
             if (customView != null && !customView.isEmpty() && !customView.equals("none")) {
