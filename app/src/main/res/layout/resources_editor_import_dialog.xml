@@ -1,0 +1,53 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/resources_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@android:layout/simple_list_item_multiple_choice" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:text="Select Import option"/>
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_import_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        app:checkedChip="@+id/chip_merge_and_skip"
+        app:chipSpacingVertical="-5dp"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_merge_and_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Merge and Skip" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_merge_and_replace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Merge and Replace" />
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Replace all" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+</LinearLayout>

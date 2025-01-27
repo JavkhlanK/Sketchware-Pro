@@ -499,8 +499,8 @@ public class ViewBeanFactory {
         if (textColor != null) {
             if (PropertiesUtil.isHexColor(textColor)) {
                 bean.textColor = PropertiesUtil.parseColor(textColor);
-            } else if (textColor.startsWith("@color/")) {
-                bean.resTextColor = parseReferName(textColor, "/");
+            } else if (textColor.startsWith("@color/") || textColor.startsWith("?")) {
+                bean.resTextColor = textColor;
             } else {
                 injectAttributes.put("android:textColor", textColor);
             }
@@ -518,8 +518,8 @@ public class ViewBeanFactory {
                 if (hintColor != null) {
                     if (PropertiesUtil.isHexColor(hintColor)) {
                         bean.hintColor = PropertiesUtil.parseColor(hintColor);
-                    } else if (hintColor.startsWith("@color/")) {
-                        bean.resHintColor = parseReferName(hintColor, "/");
+                    } else if (hintColor.startsWith("@color/") || hintColor.startsWith("?")) {
+                        bean.resHintColor = hintColor;
                     } else {
                         injectAttributes.put("android:textColorHint", hintColor);
                     }
@@ -654,8 +654,9 @@ public class ViewBeanFactory {
         if (background != null) {
             if (PropertiesUtil.isHexColor(background)) {
                 bean.backgroundColor = PropertiesUtil.parseColor(background);
-            } else if (background.startsWith("@color/")) {
-                bean.backgroundResColor = parseReferName(background, "/");
+            } else if (background.startsWith("@color/") || background.startsWith("?")) {
+                bean.backgroundResColor = background;
+                bean.backgroundColor = 0xFFFFFFFF;
             } else if (background.startsWith("@drawable/")) {
                 bean.backgroundResource = parseReferName(background, "/");
             } else if (background.equals("@android:color/transparent")) {

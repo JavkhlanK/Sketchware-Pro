@@ -1000,6 +1000,10 @@ Please click on Settings to allow permission for Storage. Without this permissio
     <string name="common_word_see_all">See All</string>
     <string name="common_word_see_more">See More</string>
     <string name="common_word_select">Select</string>
+    <string name="common_word_select_variant">Select a Variant</string>
+    <string name="common_word_change_variant">Change the Variant</string>
+    <string name="common_word_create_variant">Create new Variant</string>
+    <string name="common_word_import_variant">Import from Default Variant</string>
     <string name="common_word_settings">Settings</string>
     <string name="common_word_share">Share</string>
     <string name="common_word_show">Show</string>
@@ -1060,6 +1064,9 @@ ex)\"*/*\", \"image/*\", \"audio/*\", \"text/*\""</string>
     <string name="design_actionbar_title_manager_image">Image manager</string>
     <string name="design_actionbar_title_manager_sound">Sound manager</string>
     <string name="design_actionbar_title_manager_view">View manager</string>
+    <string name="design_actionbar_title_manager_resources">Resources editor</string>
+    <string name="resource_manager_no_list_title">No %s here</string>
+    <string name="resource_manager_no_list_body">You don\'t have any %s here yet, try creating one.</string>
     <string name="design_actionbar_title_show_source_code">Show source code</string>
     <string name="design_button_properties">Properties</string>
     <string name="design_drawer_menu_bottom_title">Global</string>
@@ -1129,6 +1136,10 @@ ex)\"*/*\", \"image/*\", \"audio/*\", \"text/*\""</string>
     <string name="design_library_admob_title_interstitial">Interstitial AD</string>
     <string name="design_library_admob_widget_setup_first">In order to use this widget, you have to setup the settings in the Library Manager first.</string>
     <string name="design_library_appcompat_description">Activating App Compat library will let you add Drawer Layout and Floating Action Button to the Activities.</string>
+    <string name="design_library_material_3_description">Enabling Material 3 will enable the latest Material You design principles in your app, providing a more modern and visually appealing interface with customizable components and advanced theming options.</string>
+    <string name="design_library_material_3_enable_warning">Please note that enabling this library may have an impact on the overall design and appearance of the app, particularly if it’s an older project. It’s recommended to verify the changes and ensure compatibility with your current setup before activation.</string>
+    <string name="design_library_dynamic_colors_description">Enabling Dynamic Colors allows your app to adapt its color scheme based on the user\'s system preferences, creating a seamless and personalized experience that reflects the user\'s chosen theme and appearance.</string>
+    <string name="design_library_title_material3">"Material 3 and Dynamic Colors"</string>
     <string name="design_library_appcompat_need_firebase_disable">You can not disable the AppCompat Library when Firebase is in use.</string>
     <string name="design_library_button_import_from_other_project">Import from the other project</string>
     <string name="design_library_description_admob">Use Google AdMob</string>
@@ -1592,7 +1603,7 @@ But, components should be added manually for working correctly."</string>
     <string name="picker_color_already_exist">This color already exists</string>
     <string name="picker_color_custom_color_not_found">No custom color found</string>
     <string name="picker_color_hint_enter_hex_color_code">Enter hex color code</string>
-    <string name="picker_color_xml_is_empty">Colors.xml is empty</string>
+    <string name="picker_color_xml_is_empty">colors.xml is empty</string>
     <string name="picker_color_message_delete_all_custom_color">Are you sure you want to continue? This action can not be undone.</string>
     <string name="picker_color_message_delete_custom_color">Are you sure you want to continue? This action can not be undone.</string>
     <string name="picker_color_title_delete_all_custom_color">Delete All Custom Colors</string>
@@ -2108,11 +2119,13 @@ Please try again later"</string>
     <string name="view_widget_favorites_save_guide">Saved widgets are saved to My Collection and are accessible from all the projects.</string>
     <string name="view_widget_favorites_save_guide_new">If you save this widget, this widget will be added to widget collection and images used in this widget will be added to image collection automatically. Saved widget can be used in all projects.</string>
     <string name="view_widget_favorites_save_title">Save widget to my collection</string>
-    <string name="text_title_menu_resource">Resource</string>
+    <string name="text_title_menu_resource">Resource manager</string>
+    <string name="text_title_menu_resource_editor">Resource editor</string>
     <string name="text_title_menu_assets">Asset</string>
     <string name="text_title_menu_permission">Permission</string>
     <string name="text_title_menu_local_library">Local library</string>
-    <string name="text_subtitle_menu_resource">Import resource files</string>
+    <string name="text_subtitle_menu_resource">Manage resource files</string>
+    <string name="text_subtitle_menu_resource_editor">Edit resource files</string>
     <string name="text_subtitle_menu_assets">Import asset files</string>
     <string name="text_subtitle_menu_permission">Add custom permissions</string>
     <string name="text_subtitle_menu_local_library">Add local libraries</string>
@@ -2245,5 +2258,12 @@ Please try again later"</string>
     <string name="property_enter_value">Enter %s value</string>
     
     <string name="code_viewer">Code Viewer</string>
+
+    <string name="resources_manager_xml_load_failed_message">data loading failed in \"%s\" \nPlease open the code editor to fix the issue manually</string>
+    <string name="resources_manager_xml_load_failed_title">Data Loading Failed</string>
+    <string name="resources_manager_xml_important_note_title">Important Note :</string>
+    <string name="resources_manager_xml_important_note_message_strings">Changing the `app_name` value will directly affect this project\'s application name</string>
+    <string name="resources_manager_xml_important_note_message_colors">Changing primary colors will affect the app\'s visual theme, including buttons and highlights</string>
+    <string name="resources_editor_unsaved_changes_message">You have unsaved changes in \"%s\"\nDo you want to save your changes before quitting?</string>
 
 </resources>

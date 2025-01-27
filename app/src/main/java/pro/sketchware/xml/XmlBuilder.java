@@ -61,9 +61,11 @@ public class XmlBuilder {
 
     public String toCode() {
         StringBuilder resultCode = new StringBuilder();
+
         resultCode.append(addZeroIndent());
         resultCode.append("<");
         resultCode.append(a);
+
         for (AttributeBuilder attr : e) {
             if (e.size() <= 1 || d) {
                 resultCode.append(" ");
@@ -74,6 +76,7 @@ public class XmlBuilder {
             }
             resultCode.append(attr.toCode());
         }
+
         if (f.size() <= 0) {
             if (c == null || c.length() <= 0) {
                 resultCode.append(" />");
@@ -95,6 +98,7 @@ public class XmlBuilder {
             resultCode.append(a);
             resultCode.append(">");
         }
+
         resultCode.append("\r\n");
         return resultCode.toString();
     }

@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +12,6 @@
         android:id="@+id/color_key_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:hint="Color name">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -27,11 +27,10 @@
             tools:ignore="LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="14dp">
-
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/color_value_input_layout"
@@ -39,24 +38,17 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
-            android:hint="Color hex code"
+            android:hint="Color value"
             android:importantForAutofill="noExcludeDescendants"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toStartOf="@+id/color_preview_card"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/color_preview_card">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/color_value_input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:digits="0123456789ABCDEFabcdef"
-                android:inputType="text|textCapCharacters"
-                android:maxLength="8"
-                android:paddingLeft="32dp"
                 android:singleLine="true"
-                android:textSize="16sp"
-                app:errorEnabled="false" />
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -64,8 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/color_value_input_layout"
+            android:layout_alignParentEnd="true"
             app:strokeWidth="1dp">
 
             <TextView
@@ -77,16 +68,101 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/hash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:paddingLeft="13dp"
-            android:text="\#"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/color_value_input_layout"
-            app:layout_constraintTop_toTopOf="@+id/color_value_input_layout" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="Header"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="String header value ( optional )">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/string_header_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:textSize="16sp"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/importantNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resources_manager_xml_important_note_title"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/resources_manager_xml_important_note_message_colors"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/img_color_guide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:background="#ff000000"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/color_guide"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/help"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:srcCompat="@drawable/ic_mtrl_help" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

@@ -16,6 +16,7 @@ import a.a.a.Zx;
 import a.a.a.mB;
 import a.a.a.wB;
 import mod.hey.studios.util.Helper;
+import pro.sketchware.utility.ThemeUtils;
 
 @SuppressLint("ViewConstructor")
 public class PropertyColorItem extends RelativeLayout implements View.OnClickListener {
@@ -158,10 +159,16 @@ public class PropertyColorItem extends RelativeLayout implements View.OnClickLis
 
             @Override
             public void a(String var1, int var2) {
-                setValue(var2, var1);
+                setValue(var2, "@color/" +  var1);
                 if (valueChangeListener != null) {
                     valueChangeListener.a(key, value);
                 }
+            }
+        });
+        colorPicker.materialColorAttr((attr, attrId) -> {
+            setValue(ThemeUtils.getColor(viewColor, attrId), "?" + attr);
+            if (valueChangeListener != null) {
+                valueChangeListener.a(key, value);
             }
         });
         colorPicker.showAtLocation(anchorView, Gravity.CENTER, 0, 0);

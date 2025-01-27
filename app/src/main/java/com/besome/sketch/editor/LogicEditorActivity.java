@@ -1,9 +1,5 @@
 package com.besome.sketch.editor;
 
-import static mod.bobur.StringEditorActivity.convertListMapToXml;
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-import static pro.sketchware.utility.SketchwareUtil.getDip;
 import static pro.sketchware.widgets.WidgetsCreatorManager.clearErrorOnTextChanged;
 
 import android.animation.ObjectAnimator;
@@ -72,7 +68,6 @@ import com.besome.sketch.editor.view.ViewDummy;
 import com.besome.sketch.editor.view.ViewLogicEditor;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -91,7 +86,6 @@ import a.a.a.DB;
 import a.a.a.FB;
 import a.a.a.Fx;
 import a.a.a.GB;
-import a.a.a.Lx;
 import a.a.a.MA;
 import a.a.a.Mp;
 import a.a.a.NB;
@@ -118,7 +112,7 @@ import a.a.a.xB;
 import a.a.a.yq;
 import a.a.a.yy;
 import dev.aldi.sayuti.block.ExtraPaletteBlock;
-import mod.bobur.StringEditorActivity;
+
 import mod.bobur.XmlToSvgConverter;
 import mod.hey.studios.editor.view.IdGenerator;
 import mod.hey.studios.moreblock.ReturnMoreblockManager;
@@ -130,6 +124,7 @@ import mod.jbk.editor.manage.MoreblockImporter;
 import mod.jbk.util.BlockUtil;
 import mod.pranav.viewbinding.ViewBindingBuilder;
 import pro.sketchware.R;
+import pro.sketchware.activities.resources.editors.utils.StringsEditorManager;
 import pro.sketchware.databinding.ImagePickerItemBinding;
 import pro.sketchware.databinding.SearchWithRecyclerViewBinding;
 import pro.sketchware.databinding.PropertyPopupSelectorSingleBinding;
@@ -139,6 +134,7 @@ import pro.sketchware.utility.FilePathUtil;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.SvgUtils;
+import pro.sketchware.activities.resources.editors.ResourcesEditorActivity;
 import pro.sketchware.activities.editor.view.CodeViewerActivity;
 
 @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded", "SetTextI18n", "DefaultLocale"})
@@ -172,7 +168,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     private ArrayList<BlockBean> savedBlockBean = new ArrayList<>();
     private Boolean isViewBindingEnabled;
 
-    private final ActivityResultLauncher<Intent> openStringEditor = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> openResourcesEditor = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             paletteSelector.performClickPalette(-1);
         }
@@ -359,14 +355,15 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
             String filePath = new FilePathUtil().getPathResource(B) + "/values/strings.xml";
             ArrayList<HashMap<String, Object>> StringsListMap = new ArrayList<>();
-            convertXmlToListMap(FileUtil.readFile(filePath), StringsListMap);
+            StringsEditorManager stringsEditorManager = new StringsEditorManager();
+            stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFile(filePath), StringsListMap);
 
             clearErrorOnTextChanged(binding.stringKeyInput, binding.stringKeyInputLayout);
 
             String key = Objects.requireNonNull(binding.stringKeyInput.getText()).toString();
             String value = Objects.requireNonNull(binding.stringValueInput.getText()).toString();
 
-            if (isXmlStringsContains(StringsListMap, key)) {
+            if (stringsEditorManager.isXmlStringsExist(StringsListMap, key)) {
                 binding.stringKeyInputLayout.setError("\"" + key + "\" is already exist");
                 return;
             }
@@ -379,9 +376,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             HashMap<String, Object> map = new HashMap<>();
             map.put("key", key);
             map.put("text", value);
-            map.put("translatable", "true");
             StringsListMap.add(map);
-            FileUtil.writeFile(filePath, convertListMapToXml(StringsListMap));
+            FileUtil.writeFile(filePath, stringsEditorManager.convertListMapToXmlStrings(StringsListMap, new HashMap<>()));
             paletteSelector.performClickPalette(-1);
             dialog.dismiss();
         });
@@ -394,7 +390,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         String filePath = new FilePathUtil().getPathResource(B) + "/values/strings.xml";
 
         ArrayList<HashMap<String, Object>> stringsList = new ArrayList<>();
-        convertXmlToListMap(FileUtil.readFile(filePath), stringsList);
+        StringsEditorManager stringsEditorManager = new StringsEditorManager();
+        stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFile(filePath), stringsList);
 
         aB dialog = new aB(this);
         dialog.b(getTranslatedString(R.string.logic_editor_title_remove_xml_strings));
@@ -423,7 +420,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
             }
 
-            FileUtil.writeFile(filePath, convertListMapToXml(stringsList));
+            FileUtil.writeFile(filePath, stringsEditorManager.convertListMapToXmlStrings(stringsList, new HashMap<>()));
 
             paletteSelector.performClickPalette(-1);
             dialog.dismiss();
@@ -447,7 +444,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
     private boolean isXmlStringUsed(String projectScId, String key) {
         if ("app_name".equals(key)) {
-            return false;
+            return true;
         }
         eC projectDataManager = jC.a(projectScId);
 
@@ -551,13 +548,11 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         return xmlFileNames;
     }
 
-    public void openStringEditor() {
+    public void openResourcesEditor() {
         Intent intent = new Intent();
-        intent.setClass(getApplicationContext(), StringEditorActivity.class);
-        intent.putExtra("title", "strings.xml");
-        intent.putExtra("content", new FilePathUtil().getPathResource(B) + "/values/strings.xml");
-        intent.putExtra("xml", "");
-        openStringEditor.launch(intent);
+        intent.setClass(getApplicationContext(), ResourcesEditorActivity.class);
+        intent.putExtra("sc_id", B);
+        openResourcesEditor.launch(intent);
     }
 
     public void I() {
@@ -746,7 +741,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     }
                 } else {
                     try {
-                        XmlToSvgConverter.setImageVectorFromFile(imageView, XmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, str));
+                        XmlToSvgConverter xmlToSvgConverter = new XmlToSvgConverter();
+                        xmlToSvgConverter.setImageVectorFromFile(imageView, xmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, str));
                     } catch (Exception e) {
                         imageView.setImageResource(R.drawable.ic_remove_grey600_24dp);
                     }
@@ -913,7 +909,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ArrayList<String> images = jC.d(B).m();
-        images.addAll(XmlToSvgConverter.getVectorDrawables(DesignActivity.sc_id));
+        images.addAll(new XmlToSvgConverter().getVectorDrawables(DesignActivity.sc_id));
         if (selectingImage) {
             images.add(0, "default_image");
         } else if (selectingBackgroundImage) {
@@ -1546,6 +1542,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 LogicEditorActivity.this.a(ss, "getResources().getColor(R.color." + var1 + ")");
             }
         });
+        zx.materialColorAttr((attr, attrId) -> {
+            LogicEditorActivity.this.a(ss, "getMaterialColor(R.attr." + attr + ")");
+        });
         zx.showAtLocation(ss, Gravity.CENTER, 0, 0);
     }
 
@@ -2147,8 +2146,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     showAddNewXmlStringDialog();
                 } else if (tag.equals("XmlString.remove")) {
                     showRemoveXmlStringDialog();
-                } else if (tag.equals("openStringEditor")) {
-                    openStringEditor();
+                } else if (tag.equals("openResourcesEditor")) {
+                    openResourcesEditor();
                 } else if (tag.equals("listAdd")) {
                     G();
                 } else if (tag.equals("listRemove")) {

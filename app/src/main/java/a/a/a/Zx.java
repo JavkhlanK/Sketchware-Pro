@@ -1,9 +1,9 @@
 package a.a.a;
 
-import static pro.sketchware.activities.coloreditor.ColorEditorActivity.getColorValue;
-
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.besome.sketch.beans.ColorBean;
+import com.besome.sketch.editor.manage.library.material3.Material3LibraryManager;
 import com.besome.sketch.editor.view.ColorGroupItem;
+
 import pro.sketchware.R;
+import pro.sketchware.activities.resources.editors.utils.ColorsEditorManager;
 import pro.sketchware.databinding.ColorPickerBinding;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -31,16 +34,21 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pro.sketchware.databinding.ItemAttrBinding;
 import pro.sketchware.utility.FileUtil;
 import mod.hey.studios.util.Helper;
+import pro.sketchware.utility.SketchwareUtil;
+import pro.sketchware.utility.ThemeUtils;
 
 public class Zx extends PopupWindow {
 
     private final ArrayList<ColorBean> colorList = new ArrayList<>();
     private final ArrayList<ColorBean[]> colorGroups = new ArrayList<>();
+    private ArrayList<Attribute> attributes;
     private final ArrayList<HashMap<String, Object>> color_res_list = new ArrayList<>();
     private final ColorPickerBinding binding;
     private b colorPickerCallback;
+    private materialColorAttr materialColorAttr;
     private XB colorValidator;
     private int k;
     private int l;
@@ -48,7 +56,9 @@ public class Zx extends PopupWindow {
     private DB colorPref;
     private Activity activity;
     private static String sc_id;
-
+    private boolean hasMaterialColors;
+    private final ColorsAdapter colorsAdapter = new ColorsAdapter();
+    private Material3LibraryManager material3LibraryManager;
 
     public Zx(Activity activity, int var3, boolean isTransparentColor, boolean isNoneColor) {
         super(activity);
@@ -60,6 +70,8 @@ public class Zx extends PopupWindow {
         super(activity);
         binding = ColorPickerBinding.inflate(activity.getLayoutInflater());
         sc_id = scId;
+        material3LibraryManager = new Material3LibraryManager(scId);
+        hasMaterialColors = true;
         initialize(activity, var3, isTransparentColor, isNoneColor);
     }
 
@@ -80,6 +92,10 @@ public class Zx extends PopupWindow {
 
     public void a(b callback) {
         colorPickerCallback = callback;
+    }
+
+    public void materialColorAttr(materialColorAttr callback) {
+        materialColorAttr = callback;
     }
 
     public void initialize(Activity activity, int var3, boolean isTransparentColor, boolean isNoneColor) {
@@ -109,7 +125,7 @@ public class Zx extends PopupWindow {
         super.setHeight(widthAndHeight[1]);
         binding.colorList.setHasFixedSize(true);
         binding.colorList.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
-        binding.colorList.setAdapter(new ColorsAdapter());
+        binding.colorList.setAdapter(colorsAdapter);
         binding.colorList.setItemAnimator(new DefaultItemAnimator());
 
         binding.tiCustomColor.setHint(xB.b().a(activity, R.string.picker_color_hint_enter_hex_color_code));
@@ -135,12 +151,27 @@ public class Zx extends PopupWindow {
                 l = finalJ;
                 if (finalJ == 0 && colorGroups.get(finalJ).length == 0) {
                     bB.b(activity, xB.b().a(activity, R.string.picker_color_custom_color_not_found), 1).show();
+                    return;
                 }
                 if (finalJ == 1 && colorGroups.get(finalJ).length == 0) {
                     bB.b(activity, xB.b().a(activity, R.string.picker_color_xml_is_empty), 1).show();
-
+                    return;
                 }
-                binding.colorList.getAdapter().notifyDataSetChanged();
+                if (finalJ == 2 && !material3LibraryManager.isMaterial3Enabled()) {
+                    SketchwareUtil.toastError("Please enable Material3 in the Library Manager first");
+                    return;
+                }
+                if (hasMaterialColors) {
+                    if (binding.colorList.getAdapter() instanceof AttrAdapter && finalJ != 2) {
+                        binding.colorList.setAdapter(colorsAdapter);
+                    } else if (finalJ == 2) {
+                        binding.colorList.setAdapter(new AttrAdapter(attributes));
+                    } else {
+                        colorsAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    colorsAdapter.notifyDataSetChanged();
+                }
             });
             colorGroupItem.b.setText(colorBean.colorName);
             colorGroupItem.b.setTextColor(colorBean.displayNameColor);
@@ -176,6 +207,7 @@ public class Zx extends PopupWindow {
                 }
             });
         }
+        initializeAttrsList();
 
     }
 
@@ -197,6 +229,8 @@ public class Zx extends PopupWindow {
         colorList.add(new ColorBean("#FFF6F6F6", "CUSTOM", "#212121", R.drawable.checked_grey_32));
         if (sc_id != null)
             colorList.add(new ColorBean("#FFF6F6F6", "colors.xml", "#212121", R.drawable.checked_grey_32));
+        if (hasMaterialColors)
+            colorList.add(new ColorBean("#FFF6F6F6", "Material 3 Colors", "#212121", R.drawable.checked_grey_32));
         colorList.add(sq.p[0]);
         colorList.add(sq.q[0]);
         colorList.add(sq.r[0]);
@@ -219,7 +253,10 @@ public class Zx extends PopupWindow {
         colorList.add(sq.I[0]);
         colorList.add(sq.J[0]);
         colorGroups.add(getSavedColorBeans());
-        if (sc_id != null) colorGroups.add(geColorResBeans());
+        if (sc_id != null)
+            colorGroups.add(geColorResBeans());
+        if (hasMaterialColors)
+            colorGroups.add(sq.p);
         colorGroups.add(sq.p);
         colorGroups.add(sq.q);
         colorGroups.add(sq.r);
@@ -342,6 +379,7 @@ public class Zx extends PopupWindow {
     }
 
     private void parseColorsXML(String colorXml) {
+        ColorsEditorManager colorsEditorManager = new ColorsEditorManager();
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = factory.newPullParser();
@@ -364,10 +402,10 @@ public class Zx extends PopupWindow {
                         break;
                     case XmlPullParser.END_TAG:
                         if (tagName.equals("color")) {
-                            if (colorName != null && isValidHexColor(getColorValue(activity.getApplicationContext(), colorValue, 4))) {
+                            if (colorName != null && isValidHexColor(colorsEditorManager.getColorValue(activity.getApplicationContext(), colorValue, 4))) {
                                 HashMap<String, Object> colors = new HashMap<>();
                                 colors.put("colorName", colorName);
-                                colors.put("colorValue", String.format("#%8s", getColorValue(activity.getApplicationContext(), colorValue, 4).replaceFirst("#", "")).replaceAll(" ", "F"));
+                                colors.put("colorValue", String.format("#%8s", colorsEditorManager.getColorValue(activity.getApplicationContext(), colorValue, 4).replaceFirst("#", "")).replaceAll(" ", "F"));
                                 color_res_list.add(colors);
                             }
                         }
@@ -421,6 +459,14 @@ public class Zx extends PopupWindow {
         void a(int var1);
 
         void a(String var1, int var2);
+    }
+
+    public interface materialColorAttr {
+        void selectedMaterialColorAttr(String attr, int attrId);
+    }
+
+    public interface materialLightColorAttr {
+        void selectedMaterialLightColorAttr(String attr, int attrId);
     }
 
     private class ColorsAdapter extends RecyclerView.Adapter<ColorsAdapter.ColorViewHolder> {
@@ -496,4 +542,97 @@ public class Zx extends PopupWindow {
             }
         }
     }
+
+    public void initializeAttrsList() {
+        if (!hasMaterialColors) return;
+        attributes = new ArrayList<>();
+
+        attributes.add(new Attribute("colorSurface", R.attr.colorSurface));
+        attributes.add(new Attribute("colorOnSurface", R.attr.colorOnSurface));
+        attributes.add(new Attribute("colorPrimary", R.attr.colorPrimary));
+        attributes.add(new Attribute("colorOnPrimary", R.attr.colorOnPrimary));
+        attributes.add(new Attribute("colorPrimaryContainer", R.attr.colorPrimaryContainer));
+        attributes.add(new Attribute("colorOnPrimaryContainer", R.attr.colorOnPrimaryContainer));
+        attributes.add(new Attribute("colorSecondary", R.attr.colorSecondary));
+        attributes.add(new Attribute("colorOnSecondary", R.attr.colorOnSecondary));
+        attributes.add(new Attribute("colorSecondaryContainer", R.attr.colorSecondaryContainer));
+        attributes.add(new Attribute("colorOnSecondaryContainer", R.attr.colorOnSecondaryContainer));
+        attributes.add(new Attribute("colorTertiary", R.attr.colorTertiary));
+        attributes.add(new Attribute("colorOnTertiary", R.attr.colorOnTertiary));
+        attributes.add(new Attribute("colorTertiaryContainer", R.attr.colorTertiaryContainer));
+        attributes.add(new Attribute("colorOnTertiaryContainer", R.attr.colorOnTertiaryContainer));
+        attributes.add(new Attribute("colorSurfaceVariant", R.attr.colorSurfaceVariant));
+        attributes.add(new Attribute("colorOnSurfaceVariant", R.attr.colorOnSurfaceVariant));
+        attributes.add(new Attribute("colorSurfaceInverse", R.attr.colorSurfaceInverse));
+        attributes.add(new Attribute("colorOnSurfaceInverse", R.attr.colorOnSurfaceInverse));
+        attributes.add(new Attribute("colorError", R.attr.colorError));
+        attributes.add(new Attribute("colorOnError", R.attr.colorOnError));
+        attributes.add(new Attribute("colorErrorContainer", R.attr.colorErrorContainer));
+        attributes.add(new Attribute("colorOnErrorContainer", R.attr.colorOnErrorContainer));
+    }
+
+    public class AttrAdapter extends RecyclerView.Adapter<AttrAdapter.AttrViewHolder> {
+
+        private final ArrayList<Attribute> attributeList;
+        private final Context themedDarkContext;
+        private final Context themedLightContext;
+
+        public AttrAdapter(ArrayList<Attribute> attributeList) {
+            this.attributeList = attributeList;
+            if (material3LibraryManager.isDynamicColorsEnabled()) {
+                themedDarkContext = new ContextThemeWrapper(activity, R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_Dark);
+                themedLightContext = new ContextThemeWrapper(activity, R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_Light);
+            } else {
+                themedDarkContext = new ContextThemeWrapper(activity, R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_NON_DYNAMIC_Dark);
+                themedLightContext = new ContextThemeWrapper(activity, R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_NON_DYNAMIC_Light);
+            }
+        }
+
+        @NonNull
+        @Override
+        public AttrViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            ItemAttrBinding binding = ItemAttrBinding.inflate(
+                    LayoutInflater.from(parent.getContext()), parent, false);
+            return new AttrViewHolder(binding);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AttrViewHolder holder, int position) {
+            Attribute attribute = attributeList.get(position);
+            holder.binding.tvAttrName.setText(attribute.attrName());
+
+            int darkColor = ThemeUtils.getColor(new View(themedDarkContext), attribute.attr());
+            int lightColor = ThemeUtils.getColor(new View(themedLightContext), attribute.attr());
+
+            holder.binding.darkContainer.setBackgroundColor(darkColor);
+            holder.binding.lightContainer.setBackgroundColor(lightColor);
+            holder.binding.darkTtl.setTextColor(lightColor);
+            holder.binding.lightTtl.setTextColor(darkColor);
+
+            holder.binding.getRoot().setOnClickListener(view -> {
+                if (materialColorAttr != null) {
+                    materialColorAttr.selectedMaterialColorAttr(attribute.attrName(), attribute.attr());
+                }
+                dismiss();
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return attributeList.size();
+        }
+
+        public static class AttrViewHolder extends RecyclerView.ViewHolder {
+            private final ItemAttrBinding binding;
+
+            public AttrViewHolder(@NonNull ItemAttrBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
+            }
+        }
+    }
+
+    public record Attribute(String attrName, int attr) {
+    }
+
 }

@@ -58,7 +58,6 @@
         <activity
             android:name="com.besome.sketch.editor.LogicEditorActivity"
             android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="false"
             android:theme="@style/Theme.SketchwarePro.SmallToolbar"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
@@ -298,16 +297,17 @@
         <activity android:name="pro.sketchware.activities.main.fragments.projects_store.ProjectPreviewActivity"
             android:configChanges="orientation|screenSize" />
 
-        <activity android:name="pro.sketchware.activities.coloreditor.ColorEditorActivity" />
-        
         <activity android:name="pro.sketchware.activities.settings.SettingsActivity" />
-        
+
+        <activity android:name="pro.sketchware.activities.resources.editors.ResourcesEditorActivity" />
+
+        <activity
+            android:name="com.besome.sketch.editor.manage.library.material3.Material3LibraryActivity"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".activities.appcompat.ManageAppCompatActivity"
             android:configChanges="orientation|screenSize" />
-
-        <activity android:name="mod.bobur.StringEditorActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
 
         <activity
             android:name=".activities.editor.command.ManageXMLCommandActivity"

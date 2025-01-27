@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import a.a.a.GB;
@@ -492,6 +493,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
                     data.put(themeColorKeys[i], projectThemeColors[i]);
                 }
                 lC.b(sc_id, data);
+                updateProjectResourcesContents(data);
             } else {
                 data.put("my_sc_reg_dt", new nB().a("yyyyMMddHHmmss"));
                 data.put("custom_icon", projectHasCustomIcon);
@@ -503,6 +505,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
                     data.put(themeColorKeys[i], projectThemeColors[i]);
                 }
                 lC.a(sc_id, data);
+                updateProjectResourcesContents(data);
                 wq.a(getApplicationContext(), sc_id);
                 new oB().b(wq.b(sc_id));
                 new ProjectSettings(sc_id).setValue(ProjectSettings.SETTING_NEW_XML_COMMAND, ProjectSettings.SETTING_GENERIC_VALUE_TRUE);
@@ -513,6 +516,30 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
                 FileUtil.deleteFile(getTempIconsFolderPath("temp_icons" + File.separator));
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+
+        }
+
+        private void updateProjectResourcesContents(HashMap<String, Object> data) {
+            String baseDir = wq.b(sc_id) + "/files/resource/values/";
+            String stringsFilePath = baseDir + "strings.xml";
+            String colorsFilePath = baseDir + "colors.xml";
+            String newAppName = Objects.requireNonNull(data.get("my_app_name")).toString();
+
+            if (FileUtil.isExistFile(stringsFilePath)) {
+                String xmlContent = FileUtil.readFile(stringsFilePath);
+                xmlContent = xmlContent.replaceAll("(<string\\s+name=\"app_name\">)(.*?)(</string>)", "$1" + newAppName + "$3");
+                FileUtil.writeFile(stringsFilePath, xmlContent);
+            }
+
+            if (FileUtil.isExistFile(colorsFilePath)) {
+                String xmlContent = FileUtil.readFile(colorsFilePath);
+                for (int i = 0; i < themeColorKeys.length; i++) {
+                    String colorName = themeColorLabels[i];
+                    String newColor = String.format("#%06X", (0xFFFFFF & projectThemeColors[i]));
+                    xmlContent = xmlContent.replaceAll("(<color\\s+name=\"" + colorName + "\">)(.*?)(</color>)", "$1" + newColor + "$3");
+                }
+                FileUtil.writeFile(colorsFilePath, xmlContent);
             }
 
         }

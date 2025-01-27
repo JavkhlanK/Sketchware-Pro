@@ -1,10 +1,10 @@
-package pro.sketchware.activities.coloreditor.models;
+package pro.sketchware.activities.resources.editors.models;
 
-public class ColorItem {
+public class ColorModel {
     private String colorName;
     private String colorValue;
 
-    public ColorItem(String colorName, String colorValue) {
+    public ColorModel(String colorName, String colorValue) {
         this.colorName = colorName;
         this.colorValue = colorValue;
     }

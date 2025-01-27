@@ -1,8 +1,5 @@
 package com.besome.sketch.editor.property;
 
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -65,6 +62,7 @@ import a.a.a.wB;
 import a.a.a.yB;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
+import pro.sketchware.activities.resources.editors.utils.StringsEditorManager;
 import pro.sketchware.databinding.PropertyInputItemBinding;
 import pro.sketchware.databinding.PropertyPopupInputTextBinding;
 import pro.sketchware.databinding.PropertyPopupParentAttrBinding;
@@ -346,9 +344,10 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
 
     private void loadStringsListMap() {
         String filePath = FileUtil.getExternalStorageDir().concat("/.sketchware/data/").concat(sc_id.concat("/files/resource/values/strings.xml"));
-        convertXmlToListMap(FileUtil.readFileIfExist(filePath), stringsListMap);
+        StringsEditorManager stringsEditorManager = new StringsEditorManager();
+        stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFileIfExist(filePath), stringsListMap);
 
-        if (!isXmlStringsContains(stringsListMap, "app_name") && filePath != null) {
+        if (!stringsEditorManager.isXmlStringsExist(stringsListMap, "app_name") && filePath != null) {
             HashMap<String, Object> map = new HashMap<>();
             map.put("key", "app_name");
             map.put("text", yB.c(lC.b(sc_id), "my_app_name"));
@@ -626,13 +625,13 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
         adapter.setOnItemClickListener(
                 new AttributesAdapter.ItemClickListener() {
                     @Override
-                    public void onItemClick(Map<String, String> attributes, String attr) {
+                    public void onItemClick(LinkedHashMap<String, String> attributes, String attr) {
                         setAttributeValue(attr, attributes);
                         dialog.dismiss();
                     }
 
                     @Override
-                    public void onItemLongClick(Map<String, String> attributes, String attr) {
+                    public void onItemLongClick(LinkedHashMap<String, String> attributes, String attr) {
                         dialog.dismiss();
                         var builder =
                                 new MaterialAlertDialogBuilder(getContext())
@@ -787,8 +786,8 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
         if (valueChangeListener != null) valueChangeListener.a(key, value);
     }
 
-    private Map<String, String> readAttributes() {
-        Map<String, String> attributes = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> readAttributes() {
+        LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
 
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -810,7 +809,7 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
         return attributes;
     }
 
-    private class AttributesAdapter extends ListAdapter<String, AttributesAdapter.ViewHolder> {
+    public static class AttributesAdapter extends ListAdapter<String, AttributesAdapter.ViewHolder> {
 
         private static final DiffUtil.ItemCallback<String> DIFF_CALLBACK =
                 new DiffUtil.ItemCallback<>() {
@@ -831,10 +830,10 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
             super(DIFF_CALLBACK);
         }
 
-        private Map<String, String> attributes;
+        private LinkedHashMap<String, String> attributes;
         private ItemClickListener listener;
 
-        public void setAttributes(Map<String, String> attributes) {
+        public void setAttributes(LinkedHashMap<String, String> attributes) {
             this.attributes = attributes;
         }
 
@@ -881,11 +880,11 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
             }
         }
 
-        private interface ItemClickListener {
+        public interface ItemClickListener {
 
-            void onItemClick(Map<String, String> attributes, String item);
+            void onItemClick(LinkedHashMap<String, String> attributes, String item);
 
-            void onItemLongClick(Map<String, String> attributes, String item);
+            void onItemLongClick(LinkedHashMap<String, String> attributes, String item);
         }
     }
 }

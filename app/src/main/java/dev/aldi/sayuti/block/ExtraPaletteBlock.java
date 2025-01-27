@@ -1,8 +1,5 @@
 package dev.aldi.sayuti.block;
 
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-
 import android.util.Pair;
 
 import a.a.a.Ox;
@@ -22,6 +19,7 @@ import mod.hilal.saif.activities.tools.ConfigActivity;
 import mod.hilal.saif.blocks.BlocksHandler;
 import mod.pranav.viewbinding.ViewBindingBuilder;
 
+import pro.sketchware.activities.resources.editors.utils.StringsEditorManager;
 import pro.sketchware.blocks.ExtraBlocks;
 import pro.sketchware.control.logic.LogicClickListener;
 import pro.sketchware.utility.CustomVariableUtil;
@@ -401,16 +399,17 @@ public class ExtraPaletteBlock {
             case -1:
                 String filePath = FileUtil.getExternalStorageDir().concat("/.sketchware/data/").concat(sc_id.concat("/files/resource/values/strings.xml"));
                 ArrayList<HashMap<String, Object>> StringsListMap = new ArrayList<>();
-                convertXmlToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
+                StringsEditorManager stringsEditorManager = new StringsEditorManager();
+                stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
 
 
                 logicEditor.b("Add new String", "XmlString.Add");
                 logicEditor.b("Remove String(s)", "XmlString.remove");
-                logicEditor.b("Open String editor", "openStringEditor");
+                logicEditor.b("Open Resources editor", "openResourcesEditor");
 
                 logicEditor.a("s", "getResString");
                 logicEditor.a("Saved Res Strings :", 0xff555555);
-                if (!isXmlStringsContains(StringsListMap, "app_name")) {
+                if (!stringsEditorManager.isXmlStringsExist(StringsListMap, "app_name")) {
                     logicEditor.a("app_name", "s", "getResStr").setTag("S98ZCSapp_name");
                 }
 

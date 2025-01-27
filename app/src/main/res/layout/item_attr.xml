@@ -1,0 +1,82 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    style="?attr/materialCardViewFilledStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="75dp"
+    android:layout_margin="4dp"
+    app:strokeWidth="0.5dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHighest">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:rotation="45"
+            android:scaleY="400">
+
+            <LinearLayout
+                android:id="@+id/light_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:background="?colorSurface">
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                app:dividerThickness="0.5dp" />
+
+            <LinearLayout
+                android:id="@+id/dark_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:background="?colorOnSurface">
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/light_ttl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/settings_appearance_theme_light"
+            tools:textColor="?colorOnSurface" />
+
+        <TextView
+            android:id="@+id/dark_ttl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:padding="8dp"
+            android:text="@string/settings_appearance_theme_dark"
+            tools:textColor="?colorSurface" />
+
+        <TextView
+            android:id="@+id/tvAttrName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:shadowColor="?colorSurface"
+            android:shadowRadius="3"
+            android:text="TextView"
+            android:textColor="?colorOnSurface"
+            android:textSize="20sp"
+            tools:text="colorOnSurface" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

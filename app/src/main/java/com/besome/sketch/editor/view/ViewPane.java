@@ -1,8 +1,5 @@
 package com.besome.sketch.editor.view;
 
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,8 +31,8 @@ import com.besome.sketch.beans.ImageBean;
 import com.besome.sketch.beans.LayoutBean;
 import com.besome.sketch.beans.ProjectResourceBean;
 import com.besome.sketch.beans.ViewBean;
-import com.besome.sketch.beans.ProjectLibraryBean;
 import com.besome.sketch.design.DesignActivity;
+import com.besome.sketch.editor.manage.library.material3.Material3LibraryManager;
 import com.besome.sketch.editor.view.item.ItemAdView;
 import com.besome.sketch.editor.view.item.ItemBottomNavigationView;
 import com.besome.sketch.editor.view.item.ItemButton;
@@ -82,7 +79,6 @@ import a.a.a.wB;
 import a.a.a.wq;
 import a.a.a.yB;
 import a.a.a.zB;
-import a.a.a.jC;
 
 import dev.aldi.sayuti.editor.view.item.ItemBadgeView;
 import dev.aldi.sayuti.editor.view.item.ItemCircleImageView;
@@ -107,9 +103,9 @@ import mod.agus.jcoderz.editor.view.item.ItemRatingBar;
 import mod.agus.jcoderz.editor.view.item.ItemTimePicker;
 import mod.agus.jcoderz.editor.view.item.ItemVideoView;
 import mod.hey.studios.util.ProjectFile;
-import mod.hey.studios.project.ProjectSettings;
 
-import pro.sketchware.R;
+import pro.sketchware.activities.resources.editors.utils.ColorsEditorManager;
+import pro.sketchware.activities.resources.editors.utils.StringsEditorManager;
 import pro.sketchware.utility.FilePathUtil;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.InjectAttributeHandler;
@@ -142,7 +138,7 @@ public class ViewPane extends RelativeLayout {
     }
 
     private void initialize() {
-        context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor);
+        context = getContext();
         svgUtils = new SvgUtils(context);
         svgUtils.initImageLoader();
         setBackgroundColor(Color.WHITE);
@@ -231,6 +227,16 @@ public class ViewPane extends RelativeLayout {
 
     public void setScId(String sc_id) {
         this.sc_id = sc_id;
+        Material3LibraryManager material3LibraryManager = new Material3LibraryManager(sc_id);
+        if (material3LibraryManager.isMaterial3Enabled()) {
+            if (material3LibraryManager.isDynamicColorsEnabled()) {
+                context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_Light);
+            } else {
+                context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor_Material3_NON_DYNAMIC_Light);
+            }
+        } else {
+            context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor);
+        }
     }
 
     public void addRootLayout(ViewBean viewBean) {
@@ -464,7 +470,8 @@ public class ViewPane extends RelativeLayout {
                             ((ImageView) view).setImageBitmap(Bitmap.createScaledBitmap(decodeFile3, decodeFile3.getWidth() * round3, decodeFile3.getHeight() * round3, true));
                         }
                     } else {
-                        XmlToSvgConverter.setImageVectorFromFile(((ImageView) view), XmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
+                        XmlToSvgConverter xmlToSvgConverter = new XmlToSvgConverter();
+                        xmlToSvgConverter.setImageVectorFromFile(((ImageView) view), xmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
                     }
                 } catch (Exception unused2) {
                     ((ImageView) view).setImageResource(R.drawable.default_image);
@@ -951,8 +958,12 @@ public class ViewPane extends RelativeLayout {
         if (height > 0) {
             height = (int) wB.a(getContext(), (float) viewBean.layout.height);
         }
-        viewBean.parentType = getActualParentType(view, viewBean.parentType);
-        view.setBackgroundColor(viewBean.layout.backgroundColor);
+        if (viewBean.layout.backgroundResColor == null) {
+            view.setBackgroundColor(viewBean.layout.backgroundColor);
+        } else {
+            view.setBackgroundColor(PropertiesUtil.parseColor(new ColorsEditorManager().getColorValue(context, viewBean.layout.backgroundResColor, 3)));
+        }
+
         if (viewBean.id.equals("root")) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
             layoutParams.leftMargin = (int) wB.a(getContext(), (float) viewBean.layout.marginLeft);
@@ -1209,7 +1220,11 @@ public class ViewPane extends RelativeLayout {
         } else {
             textView.setTypeface(null, viewBean.text.textType);
         }
-        textView.setTextColor(viewBean.text.textColor);
+        if (viewBean.text.resTextColor == null) {
+            textView.setTextColor(viewBean.text.textColor);
+        } else {
+            textView.setTextColor(PropertiesUtil.parseColor(new ColorsEditorManager().getColorValue(context, viewBean.text.resTextColor, 3)));
+        }
         textView.setTextSize(viewBean.text.textSize);
         textView.setLines(viewBean.text.line);
         textView.setSingleLine(viewBean.text.singleLine != 0);
@@ -1223,9 +1238,10 @@ public class ViewPane extends RelativeLayout {
 
         ArrayList<HashMap<String, Object>> StringsListMap = new ArrayList<>();
 
-        convertXmlToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
+        StringsEditorManager stringsEditorManager = new StringsEditorManager();
+        stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
 
-        if (key.equals("@string/app_name") && !isXmlStringsContains(StringsListMap, "app_name")) {
+        if (key.equals("@string/app_name") && !stringsEditorManager.isXmlStringsExist(StringsListMap, "app_name")) {
             return yB.c(lC.b(sc_id), "my_app_name");
         }
 
@@ -1242,7 +1258,11 @@ public class ViewPane extends RelativeLayout {
     private void updateEditText(EditText editText, ViewBean viewBean) {
         String str = viewBean.text.hint;
         editText.setHint(str.startsWith(stringsStart) ? getXmlString(str) : str);
-        editText.setHintTextColor(viewBean.text.hintColor);
+        if (viewBean.text.resHintColor == null) {
+            editText.setHintTextColor(viewBean.text.hintColor);
+        } else {
+            editText.setHintTextColor(PropertiesUtil.parseColor(new ColorsEditorManager().getColorValue(context, viewBean.text.resHintColor, 3)));
+        }
     }
 
     private void updateCardView(ItemCardView cardView, InjectAttributeHandler handler) {
@@ -1254,7 +1274,11 @@ public class ViewPane extends RelativeLayout {
         String strokeColor = handler.getAttributeValueOf("strokeColor");
         String strokeWidth = handler.getAttributeValueOf("strokeWidth");
 
-        cardView.setBackgroundColor(PropertiesUtil.isHexColor(cardBackgroundColor) ? PropertiesUtil.parseColor(cardBackgroundColor) : bean.layout.backgroundColor);
+        if (PropertiesUtil.isHexColor(cardBackgroundColor)) {
+            cardView.setBackgroundColor(PropertiesUtil.parseColor(cardBackgroundColor));
+        } else {
+            cardView.setBackgroundColor(PropertiesUtil.parseColor(new ColorsEditorManager().getColorValue(context, bean.layout.backgroundResColor, 3)));
+        }
         cardView.setCardElevation(PropertiesUtil.resolveSize(cardElevation, 4));
         cardView.setRadius(PropertiesUtil.resolveSize(cardCornerRadius, 8));
         cardView.setUseCompatPadding(Boolean.parseBoolean(TextUtils.isEmpty(compatPadding) ? "false" : compatPadding));
