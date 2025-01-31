@@ -424,6 +424,19 @@ public class Ox {
                 }
             }
         }
+        // Adding tools:listitem allows the direct XML editor to recognize the customView
+        // for ListView, GridView, Spinner, or RecyclerView.
+        if ((viewBean.getClassInfo().b("ListView")
+                || viewBean.getClassInfo().b("GridView")
+                || viewBean.getClassInfo().b("Spinner")
+                || viewBean.getClassInfo().b("RecyclerView")
+                || viewBean.getClassInfo().b("ViewPager"))
+                && !injectHandler.contains("listitem")) {
+            var customView = viewBean.customView;
+            if (customView != null && !customView.isEmpty() && !customView.equals("none")) {
+                widgetTag.addAttribute("tools", "listitem", "@layout/" + customView);
+            }
+        }
         nx.a(widgetTag);
     }
 

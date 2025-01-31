@@ -134,8 +134,26 @@ public class ViewBeanFactory {
                     bean.parentAttributes.put(attrName, parseReferName(attrValue, "/"));
                     continue;
                 }
+                if (attrName.equals("tools:listitem")) {
+                    continue;
+                }
                 // add attributes for inject property
                 injectAttributes.put(attrName, attrValue);
+            }
+        }
+        if (bean.getClassInfo().b("ListView")
+                || bean.getClassInfo().b("GridView")
+                || bean.getClassInfo().b("Spinner")
+                || bean.getClassInfo().b("RecyclerView")
+                || bean.getClassInfo().b("ViewPager")) {
+            var customView = attributes.getOrDefault("tools:listitem", null);
+            if (customView != null) {
+                if (customView.startsWith("@layout/")) {
+                    var layoutName = parseReferName(customView, "/");
+                    bean.customView = !layoutName.isEmpty() ? layoutName : "none";
+                } else {
+                    injectAttributes.put("tools:listitem", customView);
+                }
             }
         }
 
