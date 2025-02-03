@@ -348,11 +348,13 @@ public class Hx {
         private final String id;
         private final ArrayList<ComponentEvents> listeners = new ArrayList<>();
         private final boolean isViewBindingEnabled;
+        private final Gx classInfo; // to be used in generateEvent()
 
         private Event(Hx hx, String id, Gx classInfo, boolean isViewBindingEnabled) {
             this.hx = hx;
             this.id = id;
             this.isViewBindingEnabled = isViewBindingEnabled;
+            this.classInfo = classInfo; // to be used in generateEvent()
 
             String[] listeners = oq.b(classInfo);
             if (listeners.length > 0) {
@@ -368,7 +370,6 @@ public class Hx {
                     case "FirebaseStorage":
                     case "FirebaseAuth":
                     case "Gyroscope":
-                    case "WebView":
                     case "InterstitialAd":
                     case "RequestNetwork":
                     case "BluetoothConnect":
@@ -384,16 +385,34 @@ public class Hx {
 
         private String generateEvent() {
             StringBuilder sb = new StringBuilder(4096);
+            boolean webViewClientAdded = false; // Track if WebViewClient is added
+            
             for (ComponentEvents value : listeners) {
                 String event = value.generateEvent(id);
+                
+                // Ensure WebViewClient is always set
+                if (classInfo.a().equals("WebView") && !webViewClientAdded) {
+                    sb.append(id).append(".setWebViewClient(new WebViewClient());").append(Jx.EOL);
+                    webViewClientAdded = true; // Mark it as added
+                }
+        
                 if (sb.length() > 0 && !event.isEmpty()) {
                     sb.append(Jx.EOL);
                     sb.append(Jx.EOL);
                 }
                 sb.append(event);
             }
+            
+            // Remove the first WebViewClient if another setWebViewClient exists
+            String output = sb.toString();
+            if (classInfo.a().equals("WebView") && output.indexOf(".setWebViewClient(") != output.lastIndexOf(".setWebViewClient(")) {
+                int firstIndex = output.indexOf(id + ".setWebViewClient(new WebViewClient());");
+                if (firstIndex != -1) {
+                    output = output.substring(0, firstIndex) + output.substring(firstIndex + (id + ".setWebViewClient(new WebViewClient());").length());
+                }
+            }
 
-            return sb.toString();
+            return output.trim();
         }
 
         private void addEvent(String targetId, String eventName, String eventLogic) {
