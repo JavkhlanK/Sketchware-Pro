@@ -5,14 +5,21 @@
         android:id="@+id/menu_view_undo"
         android:icon="@drawable/ic_mtrl_undo"
         android:orderInCategory="100"
-        android:title="Undo"
+        android:title="@string/common_word_undo"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_view_redo"
         android:icon="@drawable/ic_mtrl_redo"
         android:orderInCategory="100"
-        android:title="Redo"
+        android:title="@string/common_word_redo"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_view_hierarchy"
+        android:icon="@drawable/ic_mtrl_hierarchy"
+        android:orderInCategory="100"
+        android:title="@string/design_option_menu_title_show_hierarchy"
         app:showAsAction="always" />
 
 </menu>

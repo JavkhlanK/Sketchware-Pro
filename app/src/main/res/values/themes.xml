@@ -14,6 +14,7 @@
         </item>
         <item name="tabStyle">@style/TabLayoutStyle</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.SketchwarePro.BottomSheetDialog</item>
+                <item name="sideSheetDialogTheme">@style/ThemeOverlay.SketchwarePro.SideSheetDialog</item>
         <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.Material3.PopupMenu</item>
         <item name="materialCardViewFilledStyle">@style/Widget.SketchwarePro.MaterialCardView</item>
@@ -33,6 +34,7 @@
         <item name="textAppearanceLabelLarge">@style/TextAppearance.SketchwarePro.LabelLarge</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.SketchwarePro.LabelMedium</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.SketchwarePro.LabelSmall</item>
+
     </style>
 
     <style name="Theme.SketchwarePro.Main">
